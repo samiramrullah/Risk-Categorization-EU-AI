@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:5000";
+const API_BASE = "https://risk-categorization-eu-ai.onrender.com";
 
 export async function startAssessment() {
   const res = await fetch(`${API_BASE}/start`, { method: "POST" });
