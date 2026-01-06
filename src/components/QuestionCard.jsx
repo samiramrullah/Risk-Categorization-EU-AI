@@ -3,6 +3,17 @@ export default function QuestionCard({ question, onAnswer }) {
     <div style={styles.card}>
       <h2>{question.question}</h2>
 
+      {question.gpai_state && (
+        <div style={styles.notice}>
+          <strong>Additional GPAI obligations identified:</strong>
+          <ul>
+            {question.gpai_state.map((g, i) => (
+              <li key={i}>{g}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div style={styles.buttons}>
         {question.allowed_answers.map((ans) => (
           <button
@@ -19,20 +30,13 @@ export default function QuestionCard({ question, onAnswer }) {
 }
 
 const styles = {
-  card: {
-    padding: "24px",
-    borderRadius: "10px",
-    background: "#f8fafc",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
-  },
-  buttons: {
-    display: "flex",
-    gap: "12px",
-    marginTop: "20px"
-  },
-  button: {
-    padding: "10px 18px",
-    fontSize: "14px",
-    cursor: "pointer"
+  card: { padding: "24px", borderRadius: "10px", background: "#f8fafc" },
+  buttons: { display: "flex", gap: "12px", marginTop: "20px" },
+  button: { padding: "10px 18px", cursor: "pointer" },
+  notice: {
+    background: "#fff7ed",
+    padding: "12px",
+    marginTop: "12px",
+    borderRadius: "6px"
   }
 };

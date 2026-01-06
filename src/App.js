@@ -14,13 +14,27 @@ export default function App() {
   async function handleAnswer(answer) {
     const response = await submitAnswer(current.question_id, answer);
 
-    if (response.assessment_complete) {
-      setResult(response);
+    // 1️⃣ Human review escalation
+    if (response.status === "REQUIRES_HUMAN_REVIEW") {
+      setResult({
+        type: "HUMAN_REVIEW",
+        reason: response.reason
+      });
       setCurrent(null);
-    } else {
-      setCurrent(response);
+      return;
     }
+
+    // 2️⃣ Final assessment
+    if (response.assessment_complete) {
+      setResult(response.final_assessment);
+      setCurrent(null);
+      return;
+    }
+
+    // 3️⃣ Normal next question (with or without GPAI overlay)
+    setCurrent(response);
   }
+
 
   return (
     <div style={styles.container}>
