@@ -1,54 +1,45 @@
-import { useEffect, useState } from "react";
-import { startAssessment, submitAnswer } from "./api";
-import QuestionCard from "./components/QuestionCard";
-import ResultCard from "./components/ResultCard";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Assessment from "./page/Assessment";
+import Glossary from "./page/Glossary";
 
 export default function App() {
-  const [current, setCurrent] = useState(null);
-  const [result, setResult] = useState(null);
-
-  useEffect(() => {
-    startAssessment().then(setCurrent);
-  }, []);
-
-  async function handleAnswer(answer) {
-    const response = await submitAnswer(current.question_id, answer);
-
-    // 1️⃣ Human review escalation
-    if (response.status === "REQUIRES_HUMAN_REVIEW") {
-      setResult({
-        type: "HUMAN_REVIEW",
-        reason: response.reason
-      });
-      setCurrent(null);
-      return;
-    }
-
-    // 2️⃣ Final assessment
-    if (response.assessment_complete) {
-      setResult(response.final_assessment);
-      setCurrent(null);
-      return;
-    }
-
-    // 3️⃣ Normal next question (with or without GPAI overlay)
-    setCurrent(response);
-  }
-
-
   return (
-    <div style={styles.container}>
-      <h1>EU AI Act Risk Categorization</h1>
+    <Router>
+      <div style={styles.container}>
+        <header style={styles.header}>
+          <h1>EU AI Act Risk Categorization</h1>
+          <nav style={styles.nav}>
+            <Link to="/" style={styles.link}>Assessment</Link>
+            <Link to="/glossary" style={styles.link}>Glossary</Link>
+          </nav>
+        </header>
 
-      {current && <QuestionCard question={current} onAnswer={handleAnswer} />}
-      {result && <ResultCard result={result} />}
-    </div>
+        <Routes>
+          <Route path="/" element={<Assessment />} />
+          <Route path="/glossary" element={<Glossary />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
+
 const styles = {
   container: {
-    maxWidth: "720px",
+    maxWidth: "900px",
     margin: "40px auto",
     fontFamily: "Arial, sans-serif"
+  },
+  header: {
+    marginBottom: "30px"
+  },
+  nav: {
+    display: "flex",
+    gap: "16px",
+    marginTop: "10px"
+  },
+  link: {
+    textDecoration: "none",
+    color: "#2563eb",
+    fontWeight: "bold"
   }
 };
